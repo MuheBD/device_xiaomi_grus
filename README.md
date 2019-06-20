@@ -1,4 +1,4 @@
-Copyright (C) 2018 - The LineageOS Project
+Copyright (C) 2019 - The LineageOS Project
 
-Common device tree for Xiaomi SDM710 based devices
+Device tree for Mi 9 SE 
 ==============
