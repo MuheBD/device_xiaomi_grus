@@ -1,0 +1,6 @@
+[
+  {
+    "repository": "android_device_xiaomi_grus",
+    "target_path": "device/xiaomi/grus"
+  }
+]
