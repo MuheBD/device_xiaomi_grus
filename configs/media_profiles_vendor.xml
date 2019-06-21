@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (C) 2010 The Android Open Source Project
-     Copyright (C) 2012-2018 The Linux Foundation. All rights reserved.
+     Copyright (C) 2012-2017 The Linux Foundation. All rights reserved.
      Not a contribution.
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -338,14 +338,14 @@
             channels="2" />
     </EncoderProfile>
 
+<!--
     <EncoderProfile quality="highspeed1080p" fileFormat="mp4" duration="30">
       <Video codec="h264"
              bitRate="42000000"
              width="1920"
              height="1080"
-             frameRate="240" />
+             frameRate="120" />
 
-      <!-- audio setting is ignored -->
       <Audio codec="aac"
              bitRate="96000"
              sampleRate="48000"
@@ -358,7 +358,6 @@
                width="720"
                height="480"
                frameRate="240" />
-        <!-- audio setting is ignored -->
         <Audio codec="aac"
                bitRate="192000"
                sampleRate="48000"
@@ -370,9 +369,8 @@
              bitRate="42000000"
              width="1920"
              height="1080"
-             frameRate="240" />
+             frameRate="120" />
 
-      <!-- audio setting is ignored -->
       <Audio codec="aac"
              bitRate="96000"
              sampleRate="48000"
@@ -386,7 +384,6 @@
              height="720"
              frameRate="240" />
 
-      <!-- audio setting is ignored -->
       <Audio codec="aac"
              bitRate="96000"
              sampleRate="48000"
@@ -405,6 +402,7 @@
              sampleRate="48000"
              channels="2" />
     </EncoderProfile>
+-->
 
         <ImageEncoding quality="95" />
         <ImageEncoding quality="80" />

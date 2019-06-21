@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef VENDOR_LINEAGE_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
-#define VENDOR_LINEAGE_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
+#ifndef VENDOR_lineage_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
+#define VENDOR_lineage_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
 
 #include <hidl/MQDescriptor.h>
 #include <hidl/Status.h>
@@ -46,4 +46,4 @@ class SunlightEnhancement : public ISunlightEnhancement {
 }  // namespace lineage
 }  // namespace vendor
 
-#endif  // VENDOR_LINEAGE_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
+#endif  // VENDOR_lineage_LIVEDISPLAY_V2_0_SUNLIGHTENHANCEMENT_H
