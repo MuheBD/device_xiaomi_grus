@@ -2,18 +2,31 @@
 #
 # Copyright (C) 2018-2019 The LineageOS Project
 #
-# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 set -e
+
+DEVICE=grus
+VENDOR=xiaomi
 
 # Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "${MY_DIR}" ]]; then MY_DIR="${PWD}"; fi
 
-LINEAGE_ROOT="${MY_DIR}"/../../..
+MK_ROOT="${MY_DIR}/../../.."
 
-HELPER="${LINEAGE_ROOT}/vendor/lineage/build/tools/extract_utils.sh"
+HELPER="${MK_ROOT}/vendor/mk/build/tools/extract_utils.sh"
 if [ ! -f "${HELPER}" ]; then
     echo "Unable to find helper script at ${HELPER}"
     exit 1
@@ -22,46 +35,49 @@ source "${HELPER}"
 
 # Default to sanitizing the vendor folder before extraction
 CLEAN_VENDOR=true
-
 SECTION=
 KANG=
 
-while [ "${#}" -gt 0 ]; do
-    case "${1}" in
-        -n | --no-cleanup )
-                CLEAN_VENDOR=false
-                ;;
-        -k | --kang )
-                KANG="--kang"
-                ;;
-        -s | --section )
-                SECTION="${2}"; shift
-                CLEAN_VENDOR=false
-                ;;
-        * )
-                SRC="${1}"
-                ;;
+while [ "$1" != "" ]; do
+    case "$1" in
+        -n | --no-cleanup )     CLEAN_VENDOR=false
+                                ;;
+        -k | --kang)            KANG="--kang"
+                                ;;
+        -s | --section )        shift
+                                SECTION="$1"
+                                CLEAN_VENDOR=false
+                                ;;
+        * )                     SRC="$1"
+                                ;;
     esac
     shift
 done
 
 if [ -z "${SRC}" ]; then
-    SRC="adb"
+    SRC=adb
 fi
 
-# Initialize the helper for common device
-setup_vendor "${DEVICE_COMMON}" "${VENDOR}" "${LINEAGE_ROOT}" true "${CLEAN_VENDOR}"
+# Initialize the helper
+setup_vendor "${DEVICE}" "${VENDOR}" "${MK_ROOT}" false "${CLEAN_VENDOR}"
 
-extract "${MY_DIR}/proprietary-files.txt" "${SRC}" \
-        "${KANG}" --section "${SECTION}"
+extract "${MY_DIR}/proprietary-files.txt" "${SRC}" ${KANG} --section "${SECTION}"
+extract "${MY_DIR}/proprietary-files-twrp.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
-if [ -s "${MY_DIR}/../${DEVICE}/proprietary-files.txt" ]; then
-    # Reinitialize the helper for device
-    source "${MY_DIR}/../${DEVICE}/extract-files.sh"
-    setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
+TWRP_QSEECOMD="${MK_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary/recovery/root/sbin/qseecomd
+TWRP_GATEKEEPER="${MK_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary/recovery/root/sbin/android.hardware.gatekeeper@1.0-service
+TWRP_KEYMASTER="${MK_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary/recovery/root/sbin/android.hardware.keymaster@3.0-service
+GOODIX="${MK_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary/vendor/lib64/libgf_ca.so
 
-    extract "${MY_DIR}/../${DEVICE}/proprietary-files.txt" "${SRC}" \
-            "${KANG}" --section "${SECTION}"
-fi
+sed -i "s|/system/bin/linker64|/sbin/linker64\x0\x0\x0\x0\x0\x0|g" "${TWRP_QSEECOMD}"
+sed -i "s|/system/bin/linker64|/sbin/linker64\x0\x0\x0\x0\x0\x0|g" "${TWRP_GATEKEEPER}"
+sed -i "s|/system/bin/linker64|/sbin/linker64\x0\x0\x0\x0\x0\x0|g" "${TWRP_KEYMASTER}"
+sed -i "s|/system/etc/firmware|/vendor/firmware\x0\x0\x0\x0|g" "${GOODIX}"
+
+BLOB_ROOT="$MK_ROOT"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary
+
+patchelf --remove-needed vendor.xiaomi.hardware.mtdservice@1.0.so "$BLOB_ROOT"/vendor/bin/mlipayd@1.1
+patchelf --remove-needed vendor.xiaomi.hardware.mtdservice@1.0.so "$BLOB_ROOT"/vendor/lib64/libmlipay.so
+patchelf --remove-needed vendor.xiaomi.hardware.mtdservice@1.0.so "$BLOB_ROOT"/vendor/lib64/libmlipay@1.1.so
 
 "${MY_DIR}/setup-makefiles.sh"

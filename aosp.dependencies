@@ -1,6 +1,11 @@
+  
 [
-  {
-    "repository": "android_device_xiaomi_grus",
-    "target_path": "device/xiaomi/grus"
-  }
+ {
+   "repository": "android_vendor_xiaomi_miuicamera",
+   "target_path": "vendor/xiaomi/MiuiCamera"
+ },
+ {
+    "repository": "android_packages_resources_devicesettings",
+    "target_path": "packages/resources/devicesettings"
+ }
 ]
